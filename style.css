@@ -191,29 +191,36 @@ body {
 
 #mapMount {
     position: absolute;
-
     inset: 0;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-#mapMount svg {
-    width: 100%;
-    height: 100%;
-
-    display: block;
+    overflow: hidden;
 
     cursor: grab;
 
-    user-select: none;
+    touch-action: none;
 }
 
-#mapMount svg:active {
+#mapMount.dragging {
     cursor: grabbing;
 }
 
+#mapMount svg {
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 1800px;
+    height: 760px;
+
+    max-width: none;
+    max-height: none;
+
+    transform-origin: 0 0;
+
+    user-select: none;
+    pointer-events: auto;
+}
 /* =========================
    可選地區
 ========================= */
