@@ -440,3 +440,119 @@ document
 
 loadMap();
 clearProvince();
+function setupMapMovement(svg) {
+
+    svg.addEventListener(
+        "pointerdown",
+        event => {
+
+            if (event.button !== 0) return;
+
+            dragging = true;
+
+            dragStartX = event.clientX;
+            dragStartY = event.clientY;
+
+            startMapX = mapX;
+            startMapY = mapY;
+
+            svg.setPointerCapture(event.pointerId);
+
+            svg.style.cursor = "grabbing";
+        }
+    );
+
+
+    svg.addEventListener(
+        "pointermove",
+        event => {
+
+            if (!dragging) return;
+
+            const dx =
+                event.clientX - dragStartX;
+
+            const dy =
+                event.clientY - dragStartY;
+
+            mapX =
+                startMapX + dx;
+
+            mapY =
+                startMapY + dy;
+
+
+            /*
+             * 限制拖曳範圍，
+             * 避免整張地圖被拖出螢幕。
+             */
+
+            const limitX =
+                500 * currentScale;
+
+            const limitY =
+                300 * currentScale;
+
+
+            mapX = Math.max(
+                -limitX,
+                Math.min(limitX, mapX)
+            );
+
+            mapY = Math.max(
+                -limitY,
+                Math.min(limitY, mapY)
+            );
+
+
+            updateMapTransform();
+        }
+    );
+
+
+    svg.addEventListener(
+        "pointerup",
+        event => {
+
+            dragging = false;
+
+            svg.releasePointerCapture(
+                event.pointerId
+            );
+
+            svg.style.cursor = "grab";
+        }
+    );
+
+
+    svg.addEventListener(
+        "pointercancel",
+        () => {
+
+            dragging = false;
+
+            svg.style.cursor = "grab";
+        }
+    );
+
+
+    /*
+     * 滑鼠滾輪縮放
+     */
+
+    svg.addEventListener(
+        "wheel",
+        event => {
+
+            event.preventDefault();
+
+            const amount =
+                event.deltaY < 0
+                    ? 0.12
+                    : -0.12;
+
+            zoomMap(amount);
+        },
+        { passive: false }
+    );
+}
