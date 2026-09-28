@@ -1,10 +1,221 @@
-/*
- * 歐亞之國
- * World Map Controller
- * v0.1.3
- */
+// ============================================================
+// 《歐亞之國》
+// 地圖控制系統 v0.1.5
+// ============================================================
 
-const mapMount = document.getElementById("mapMount");
+const MAP_FILE = "assets/world-map.svg";
+
+// ------------------------------------------------------------
+// 省份資料
+// ------------------------------------------------------------
+
+const provinces = {
+
+    // ===== 西部 =====
+
+    west_coast: {
+        name: "西部沿海",
+        terrain: "沿海丘陵",
+        population: 520000,
+        agriculture: 55,
+        forestry: 65,
+        mining: 35,
+        fishing: 80,
+        cities: ["西港", "海門"]
+    },
+
+    west_forest: {
+        name: "西部森林",
+        terrain: "森林",
+        population: 430000,
+        agriculture: 35,
+        forestry: 90,
+        mining: 55,
+        fishing: 20,
+        cities: ["林城"]
+    },
+
+    west_mountain: {
+        name: "西部山地",
+        terrain: "山地",
+        population: 310000,
+        agriculture: 25,
+        forestry: 65,
+        mining: 90,
+        fishing: 10,
+        cities: ["山城", "礦城"]
+    },
+
+    // ===== 北部 =====
+
+    north_forest: {
+        name: "北方森林",
+        terrain: "寒冷森林",
+        population: 380000,
+        agriculture: 20,
+        forestry: 85,
+        mining: 60,
+        fishing: 30,
+        cities: ["北林"]
+    },
+
+    north_steppe: {
+        name: "北方草原",
+        terrain: "草原",
+        population: 680000,
+        agriculture: 45,
+        forestry: 30,
+        mining: 50,
+        fishing: 15,
+        cities: ["牧城", "北城"]
+    },
+
+    northeast_forest: {
+        name: "東北森林",
+        terrain: "寒冷森林",
+        population: 420000,
+        agriculture: 30,
+        forestry: 80,
+        mining: 65,
+        fishing: 45,
+        cities: ["東北城"]
+    },
+
+    // ===== 中部 =====
+
+    upper_river: {
+        name: "上河谷",
+        terrain: "河谷平原",
+        population: 780000,
+        agriculture: 85,
+        forestry: 40,
+        mining: 35,
+        fishing: 55,
+        cities: ["上河城"]
+    },
+
+    central_plain: {
+        name: "中央平原",
+        terrain: "平原",
+        population: 1200000,
+        agriculture: 95,
+        forestry: 30,
+        mining: 40,
+        fishing: 50,
+        cities: ["王都", "平原城"]
+    },
+
+    lower_river: {
+        name: "下河谷",
+        terrain: "河流平原",
+        population: 980000,
+        agriculture: 90,
+        forestry: 35,
+        mining: 35,
+        fishing: 75,
+        cities: ["河城", "水都"]
+    },
+
+    central_steppe: {
+        name: "中央草原",
+        terrain: "大草原",
+        population: 540000,
+        agriculture: 35,
+        forestry: 15,
+        mining: 55,
+        fishing: 10,
+        cities: ["草原城"]
+    },
+
+    // ===== 東部 =====
+
+    east_plain: {
+        name: "東部平原",
+        terrain: "沿海平原",
+        population: 1050000,
+        agriculture: 80,
+        forestry: 45,
+        mining: 50,
+        fishing: 85,
+        cities: ["東都", "平海"]
+    },
+
+    east_coast: {
+        name: "東部海岸",
+        terrain: "海岸",
+        population: 620000,
+        agriculture: 65,
+        forestry: 35,
+        mining: 45,
+        fishing: 95,
+        cities: ["海港", "東港"]
+    },
+
+    northeast_plain: {
+        name: "東北平原",
+        terrain: "草原與平原",
+        population: 730000,
+        agriculture: 70,
+        forestry: 50,
+        mining: 60,
+        fishing: 45,
+        cities: ["新城"]
+    },
+
+    // ===== 南部 =====
+
+    south_highland: {
+        name: "南方高地",
+        terrain: "高原",
+        population: 460000,
+        agriculture: 35,
+        forestry: 30,
+        mining: 80,
+        fishing: 15,
+        cities: ["高原城"]
+    },
+
+    south_desert: {
+        name: "南方荒漠",
+        terrain: "沙漠",
+        population: 260000,
+        agriculture: 10,
+        forestry: 5,
+        mining: 90,
+        fishing: 5,
+        cities: ["沙城", "礦都"]
+    },
+
+    southeast_coast: {
+        name: "東南海岸",
+        terrain: "熱帶海岸",
+        population: 580000,
+        agriculture: 75,
+        forestry: 70,
+        mining: 40,
+        fishing: 90,
+        cities: ["南港", "海城"]
+    },
+
+    southeast_islands: {
+        name: "東南群島",
+        terrain: "群島",
+        population: 210000,
+        agriculture: 55,
+        forestry: 65,
+        mining: 30,
+        fishing: 100,
+        cities: ["島城"]
+    }
+};
+
+
+// ------------------------------------------------------------
+// 系統狀態
+// ------------------------------------------------------------
+
+let mapMount = null;
+let svg = null;
 
 let currentProvince = null;
 
@@ -14,6 +225,7 @@ let mapX = 0;
 let mapY = 0;
 
 let dragging = false;
+let moved = false;
 
 let pointerStartX = 0;
 let pointerStartY = 0;
@@ -21,137 +233,77 @@ let pointerStartY = 0;
 let startMapX = 0;
 let startMapY = 0;
 
-let moved = false;
-let dragging = false;
+let pointerId = null;
 
-let dragStartX = 0;
-let dragStartY = 0;
 
-let startMapX = 0;
-let startMapY = 0;
+// 地圖原始尺寸
+const MAP_WIDTH = 2000;
+const MAP_HEIGHT = 900;
 
-/* =========================
-   省份資料
-========================= */
+// 縮放限制
+const MIN_SCALE = 0.55;
+const MAX_SCALE = 3;
 
-const provinces = {
 
-    west: {
-        name: "西陸",
-        terrain: "山地與森林",
+// ------------------------------------------------------------
+// 初始化
+// ------------------------------------------------------------
 
-        population: 620000,
+document.addEventListener("DOMContentLoaded", () => {
 
-        agriculture: 35,
-        forestry: 90,
-        mining: 75,
-        fishing: 20,
+    mapMount = document.getElementById("mapMount");
 
-        cities: [
-            "西城",
-            "林都"
-        ]
-    },
-
-    central: {
-        name: "中央河谷",
-        terrain: "河流平原",
-
-        population: 1450000,
-
-        agriculture: 95,
-        forestry: 35,
-        mining: 40,
-        fishing: 65,
-
-        cities: [
-            "王都",
-            "河城"
-        ]
-    },
-
-    east: {
-        name: "東陸",
-        terrain: "沿海平原",
-
-        population: 1100000,
-
-        agriculture: 70,
-        forestry: 45,
-        mining: 55,
-        fishing: 90,
-
-        cities: [
-            "東都",
-            "海港"
-        ]
-    },
-
-    north: {
-        name: "北方草原",
-        terrain: "草原",
-
-        population: 850000,
-
-        agriculture: 45,
-        forestry: 50,
-        mining: 60,
-        fishing: 25,
-
-        cities: [
-            "北城",
-            "牧城"
-        ]
-    },
-
-    south: {
-        name: "南方高原",
-        terrain: "乾燥高原",
-
-        population: 480000,
-
-        agriculture: 25,
-        forestry: 20,
-        mining: 85,
-        fishing: 15,
-
-        cities: [
-            "南城",
-            "礦城"
-        ]
+    if (!mapMount) {
+        console.error("找不到 #mapMount");
+        return;
     }
 
-};
+    loadMap();
+
+});
 
 
-/* =========================
-   載入 SVG
-========================= */
+// ------------------------------------------------------------
+// 載入 SVG 地圖
+// ------------------------------------------------------------
 
 async function loadMap() {
 
     try {
 
-        const response =
-            await fetch("assets/world-map.svg");
+        const response = await fetch(MAP_FILE);
 
         if (!response.ok) {
-            throw new Error("world-map.svg 載入失敗");
+            throw new Error(
+                `地圖載入失敗：HTTP ${response.status}`
+            );
         }
 
-        const svgText =
-            await response.text();
+        const svgText = await response.text();
 
         mapMount.innerHTML = svgText;
 
-        const svg =
-            mapMount.querySelector("svg");
+        svg = mapMount.querySelector("svg");
 
         if (!svg) {
-            throw new Error("找不到 SVG");
+            throw new Error("world-map.svg 中找不到 SVG");
         }
 
-        prepareMap(svg);
+        prepareSVG();
+
+        prepareProvinces();
+
+        setupDragging();
+
+        setupZoom();
+
+        setupButtons();
+
+        requestAnimationFrame(() => {
+            resetMap();
+        });
+
+        console.log("《歐亞之國》地圖載入完成");
 
     } catch (error) {
 
@@ -159,330 +311,296 @@ async function loadMap() {
 
         mapMount.innerHTML = `
             <div style="
-                color:#d6c8a9;
-                text-align:center;
                 padding:40px;
-                font-family:sans-serif;
+                color:#f5d7a0;
+                text-align:center;
+                font-family:serif;
             ">
-                <h2>世界地圖載入失敗</h2>
-                <p>請確認 assets/world-map.svg 是否存在。</p>
+                <h2>地圖載入失敗</h2>
+                <p>請確認：</p>
+                <p>assets/world-map.svg 是否存在</p>
+                <p>以及檔案名稱是否完全正確。</p>
             </div>
         `;
     }
+
 }
 
 
-/* =========================
-   初始化地圖
-========================= */
+// ------------------------------------------------------------
+// 設定 SVG
+// ------------------------------------------------------------
 
-function prepareMap(svg) {
+function prepareSVG() {
 
-    /*
-     * 目前 SVG 的五個區域
-     * 先映射成遊戲中的省份。
-     */
+    svg.setAttribute("width", MAP_WIDTH);
+    svg.setAttribute("height", MAP_HEIGHT);
 
-    const mapping = {
-        "west-region": "west",
-        "central-region": "central",
-        "east-region": "east"
-    };
+    svg.setAttribute(
+        "viewBox",
+        `0 0 ${MAP_WIDTH} ${MAP_HEIGHT}`
+    );
+
+    svg.style.width = `${MAP_WIDTH}px`;
+    svg.style.height = `${MAP_HEIGHT}px`;
+
+    svg.style.position = "absolute";
+    svg.style.left = "0";
+    svg.style.top = "0";
+
+    svg.style.transformOrigin = "0 0";
+
+    svg.style.userSelect = "none";
+
+}
 
 
-    Object.entries(mapping).forEach(
-        ([svgId, provinceId]) => {
+// ------------------------------------------------------------
+// 省份設定
+// ------------------------------------------------------------
 
-            const element =
-                svg.querySelector(`#${svgId}`);
+function prepareProvinces() {
 
-            if (!element) return;
+    const provinceElements =
+        svg.querySelectorAll(
+            ".province[data-province]"
+        );
 
-            element.classList.add("province");
+    console.log(
+        `找到 ${provinceElements.length} 個可操作省份`
+    );
 
-            element.dataset.province =
-                provinceId;
+    provinceElements.forEach(province => {
 
-            element.addEventListener(
-                "click",
-                event => {
+        const id =
+            province.dataset.province;
 
-                    event.stopPropagation();
+        if (!provinces[id]) {
 
-                    selectProvince(provinceId);
-                }
+            console.warn(
+                `SVG 中的省份 ${id} 沒有對應資料`
             );
+
         }
-    );
 
+        province.style.cursor = "pointer";
 
-    /*
-     * 北方草原與南方高原
-     * 目前是裝飾區。
-     *
-     * 下一版會正式拆成省份。
-     */
+        province.addEventListener(
+            "pointerdown",
+            event => {
 
-    svg.addEventListener(
-        "click",
-        () => {
-            clearProvince();
-        }
-    );
+                event.stopPropagation();
+
+            }
+        );
+
+        province.addEventListener(
+            "click",
+            event => {
+
+                event.stopPropagation();
+
+                // 如果剛剛是拖曳，不執行點擊
+                if (moved) {
+                    return;
+                }
+
+                selectProvince(id);
+
+            }
+        );
+
+    });
+
 }
 
 
-/* =========================
-   選擇省份
-========================= */
+// ------------------------------------------------------------
+// 選擇省份
+// ------------------------------------------------------------
 
 function selectProvince(id) {
 
-    const data = provinces[id];
-
-    if (!data) return;
+    if (!provinces[id]) {
+        console.warn(
+            `不存在的省份：${id}`
+        );
+        return;
+    }
 
     currentProvince = id;
 
-    document
-        .querySelectorAll(".province")
+    // 清除舊選取
+    svg
+        .querySelectorAll(".province.selected")
         .forEach(element => {
-
-            element.classList.toggle(
-                "selected",
-                element.dataset.province === id
-            );
+            element.classList.remove("selected");
         });
 
+    // 找到新省份
+    const element =
+        svg.querySelector(
+            `.province[data-province="${id}"]`
+        );
 
-    document.getElementById(
-        "provinceName"
-    ).textContent = data.name;
+    if (element) {
 
-    document.getElementById(
-        "provinceTerrain"
-    ).textContent = data.terrain;
+        element.classList.add("selected");
 
+    }
 
-    document.getElementById(
-        "population"
-    ).textContent =
-        data.population.toLocaleString();
+    updateProvincePanel(
+        provinces[id]
+    );
+
+}
 
 
-    updateBar(
+// ------------------------------------------------------------
+// 更新右側資訊面板
+// ------------------------------------------------------------
+
+function updateProvincePanel(data) {
+
+    const title =
+        document.getElementById("regionName");
+
+    const terrain =
+        document.getElementById("regionTerrain");
+
+    const population =
+        document.getElementById("regionPopulation");
+
+    if (title) {
+        title.textContent = data.name;
+    }
+
+    if (terrain) {
+        terrain.textContent =
+            `地形：${data.terrain}`;
+    }
+
+    if (population) {
+        population.textContent =
+            `人口：${data.population.toLocaleString()}`;
+    }
+
+    updateResource(
         "agriculture",
         data.agriculture
     );
 
-    updateBar(
+    updateResource(
         "forestry",
         data.forestry
     );
 
-    updateBar(
+    updateResource(
         "mining",
         data.mining
     );
 
-    updateBar(
+    updateResource(
         "fishing",
         data.fishing
     );
 
-
-    const cityList =
-        document.getElementById("cityList");
-
-    cityList.innerHTML =
-        data.cities
-            .map(city =>
-                `<div class="city">${city}</div>`
-            )
-            .join("");
 }
 
 
-/* =========================
-   清除選擇
-========================= */
+// ------------------------------------------------------------
+// 資源條
+// ------------------------------------------------------------
 
-function clearProvince() {
+function updateResource(type, value) {
 
-    currentProvince = null;
-
-    document
-        .querySelectorAll(".province")
-        .forEach(element =>
-            element.classList.remove("selected")
-        );
-
-
-    document.getElementById(
-        "provinceName"
-    ).textContent = "尚未選擇";
-
-    document.getElementById(
-        "provinceTerrain"
-    ).textContent = "點擊地圖上的地區";
-
-
-    document.getElementById(
-        "population"
-    ).textContent = "—";
-
-
-    [
-        "agriculture",
-        "forestry",
-        "mining",
-        "fishing"
-    ].forEach(id => {
-
-        updateBar(id, 0);
-
-    });
-
-
-    document.getElementById(
-        "cityList"
-    ).innerHTML = `
-        <div class="empty">
-            選擇一個地區後，
-            這裡會顯示城市資料。
-        </div>
-    `;
-}
-
-
-/* =========================
-   資源條
-========================= */
-
-function updateBar(id, value) {
-
-    const element =
+    const bar =
         document.querySelector(
-            `#${id} .bar-fill`
+            `[data-resource="${type}"]`
         );
 
-    const number =
-        document.querySelector(
-            `#${id} .stat-value`
-        );
+    if (!bar) return;
 
-    if (!element || !number) return;
+    bar.style.width =
+        `${Math.max(0, Math.min(100, value))}%`;
 
-    element.style.width =
-        `${value}%`;
-
-    number.textContent =
-        value === 0 ? "—" : value;
 }
 
 
-/* =========================
-   地圖縮放
-========================= */
+// ------------------------------------------------------------
+// 滑鼠拖曳
+// ------------------------------------------------------------
 
-function zoomMap(amount) {
+function setupDragging() {
 
-    currentScale += amount;
-
-    currentScale =
-        Math.max(
-            0.8,
-            Math.min(2.5, currentScale)
-        );
-
-
-    const svg =
-        mapMount.querySelector("svg");
-
-    if (!svg) return;
-
-    svg.style.transform =
-        `scale(${currentScale})`;
-}
-
-
-/* =========================
-   按鈕
-========================= */
-
-document
-    .getElementById("zoomIn")
-    .addEventListener(
-        "click",
-        () => zoomMap(.15)
-    );
-
-document
-    .getElementById("zoomOut")
-    .addEventListener(
-        "click",
-        () => zoomMap(-.15)
-    );
-
-document
-    .getElementById("resetMap")
-    .addEventListener(
-        "click",
-        () => {
-
-            currentScale = 1;
-
-            const svg =
-                mapMount.querySelector("svg");
-
-            if (svg) {
-                svg.style.transform =
-                    "scale(1)";
-            }
-        }
-    );
-
-
-/* =========================
-   啟動
-========================= */
-
-loadMap();
-clearProvince();
-function setupMapMovement(svg) {
-
-    svg.addEventListener(
+    mapMount.addEventListener(
         "pointerdown",
         event => {
 
-            if (event.button !== 0) return;
+            // 只接受滑鼠左鍵
+            if (
+                event.pointerType === "mouse" &&
+                event.button !== 0
+            ) {
+                return;
+            }
 
             dragging = true;
+            moved = false;
 
-            dragStartX = event.clientX;
-            dragStartY = event.clientY;
+            pointerId =
+                event.pointerId;
+
+            pointerStartX =
+                event.clientX;
+
+            pointerStartY =
+                event.clientY;
 
             startMapX = mapX;
             startMapY = mapY;
 
-            svg.setPointerCapture(event.pointerId);
+            mapMount.classList.add(
+                "dragging"
+            );
 
-            svg.style.cursor = "grabbing";
+            mapMount.setPointerCapture(
+                pointerId
+            );
+
         }
     );
 
 
-    svg.addEventListener(
+    mapMount.addEventListener(
         "pointermove",
         event => {
 
-            if (!dragging) return;
+            if (
+                !dragging ||
+                event.pointerId !== pointerId
+            ) {
+                return;
+            }
 
             const dx =
-                event.clientX - dragStartX;
+                event.clientX -
+                pointerStartX;
 
             const dy =
-                event.clientY - dragStartY;
+                event.clientY -
+                pointerStartY;
+
+
+            if (
+                Math.abs(dx) > 5 ||
+                Math.abs(dy) > 5
+            ) {
+
+                moved = true;
+
+            }
+
 
             mapX =
                 startMapX + dx;
@@ -491,77 +609,517 @@ function setupMapMovement(svg) {
                 startMapY + dy;
 
 
-            /*
-             * 限制拖曳範圍，
-             * 避免整張地圖被拖出螢幕。
-             */
-
-            const limitX =
-                500 * currentScale;
-
-            const limitY =
-                300 * currentScale;
-
-
-            mapX = Math.max(
-                -limitX,
-                Math.min(limitX, mapX)
-            );
-
-            mapY = Math.max(
-                -limitY,
-                Math.min(limitY, mapY)
-            );
-
+            constrainMap();
 
             updateMapTransform();
+
         }
     );
 
 
-    svg.addEventListener(
+    mapMount.addEventListener(
         "pointerup",
-        event => {
-
-            dragging = false;
-
-            svg.releasePointerCapture(
-                event.pointerId
-            );
-
-            svg.style.cursor = "grab";
-        }
+        finishDragging
     );
 
-
-    svg.addEventListener(
+    mapMount.addEventListener(
         "pointercancel",
-        () => {
-
-            dragging = false;
-
-            svg.style.cursor = "grab";
-        }
+        finishDragging
     );
 
+    mapMount.addEventListener(
+        "lostpointercapture",
+        finishDragging
+    );
 
-    /*
-     * 滑鼠滾輪縮放
-     */
+}
 
-    svg.addEventListener(
+
+function finishDragging(event) {
+
+    if (
+        pointerId !== null &&
+        event.pointerId !== pointerId
+    ) {
+        return;
+    }
+
+    dragging = false;
+
+    mapMount.classList.remove(
+        "dragging"
+    );
+
+    pointerId = null;
+
+    // 稍微延遲清除 moved
+    // 避免 pointerup 後 click 馬上觸發
+    setTimeout(() => {
+
+        moved = false;
+
+    }, 0);
+
+}
+
+
+// ------------------------------------------------------------
+// 滾輪縮放
+// ------------------------------------------------------------
+
+function setupZoom() {
+
+    mapMount.addEventListener(
         "wheel",
         event => {
 
             event.preventDefault();
 
-            const amount =
-                event.deltaY < 0
-                    ? 0.12
-                    : -0.12;
+            const oldScale =
+                currentScale;
 
-            zoomMap(amount);
+
+            // 滾輪向上：放大
+            // 滾輪向下：縮小
+
+            const zoomAmount =
+                event.deltaY < 0
+                    ? 1.15
+                    : 0.87;
+
+
+            let newScale =
+                currentScale *
+                zoomAmount;
+
+
+            newScale =
+                Math.max(
+                    MIN_SCALE,
+                    Math.min(
+                        MAX_SCALE,
+                        newScale
+                    )
+                );
+
+
+            if (
+                newScale ===
+                oldScale
+            ) {
+                return;
+            }
+
+
+            const rect =
+                mapMount.getBoundingClientRect();
+
+
+            // 滑鼠在畫面中的位置
+            const mouseX =
+                event.clientX -
+                rect.left;
+
+            const mouseY =
+                event.clientY -
+                rect.top;
+
+
+            // 保持滑鼠指向的位置不動
+            const ratio =
+                newScale /
+                oldScale;
+
+
+            mapX =
+                mouseX -
+                (mouseX - mapX) *
+                ratio;
+
+
+            mapY =
+                mouseY -
+                (mouseY - mapY) *
+                ratio;
+
+
+            currentScale =
+                newScale;
+
+
+            constrainMap();
+
+            updateMapTransform();
+
         },
-        { passive: false }
+        {
+            passive: false
+        }
     );
+
 }
+
+
+// ------------------------------------------------------------
+// 地圖位置限制
+// ------------------------------------------------------------
+
+function constrainMap() {
+
+    if (!mapMount) return;
+
+
+    const viewWidth =
+        mapMount.clientWidth;
+
+    const viewHeight =
+        mapMount.clientHeight;
+
+
+    const scaledWidth =
+        MAP_WIDTH *
+        currentScale;
+
+    const scaledHeight =
+        MAP_HEIGHT *
+        currentScale;
+
+
+    // 如果地圖比視窗小，就置中
+    if (
+        scaledWidth <=
+        viewWidth
+    ) {
+
+        mapX =
+            (viewWidth -
+                scaledWidth) /
+            2;
+
+    } else {
+
+        const minX =
+            viewWidth -
+            scaledWidth;
+
+        mapX =
+            Math.min(
+                0,
+                Math.max(
+                    minX,
+                    mapX
+                )
+            );
+
+    }
+
+
+    if (
+        scaledHeight <=
+        viewHeight
+    ) {
+
+        mapY =
+            (viewHeight -
+                scaledHeight) /
+            2;
+
+    } else {
+
+        const minY =
+            viewHeight -
+            scaledHeight;
+
+        mapY =
+            Math.min(
+                0,
+                Math.max(
+                    minY,
+                    mapY
+                )
+            );
+
+    }
+
+}
+
+
+// ------------------------------------------------------------
+// 套用地圖變形
+// ------------------------------------------------------------
+
+function updateMapTransform() {
+
+    if (!svg) return;
+
+    svg.style.transform =
+        `translate(${mapX}px, ${mapY}px)
+         scale(${currentScale})`;
+
+}
+
+
+// ------------------------------------------------------------
+// 重置地圖
+// ------------------------------------------------------------
+
+function resetMap() {
+
+    if (!mapMount) return;
+
+    const viewWidth =
+        mapMount.clientWidth;
+
+    const viewHeight =
+        mapMount.clientHeight;
+
+
+    // 讓整張地圖大致塞進視窗
+    const fitScale =
+        Math.min(
+            viewWidth / MAP_WIDTH,
+            viewHeight / MAP_HEIGHT
+        );
+
+
+    currentScale =
+        Math.max(
+            MIN_SCALE,
+            Math.min(
+                1,
+                fitScale
+            )
+        );
+
+
+    const scaledWidth =
+        MAP_WIDTH *
+        currentScale;
+
+    const scaledHeight =
+        MAP_HEIGHT *
+        currentScale;
+
+
+    mapX =
+        (viewWidth -
+            scaledWidth) /
+        2;
+
+    mapY =
+        (viewHeight -
+            scaledHeight) /
+        2;
+
+
+    constrainMap();
+
+    updateMapTransform();
+
+}
+
+
+// ------------------------------------------------------------
+// 地圖控制按鈕
+// ------------------------------------------------------------
+
+function setupButtons() {
+
+    // 放大
+    const zoomIn =
+        document.getElementById(
+            "zoomIn"
+        );
+
+    // 縮小
+    const zoomOut =
+        document.getElementById(
+            "zoomOut"
+        );
+
+    // 重置
+    const reset =
+        document.getElementById(
+            "resetMap"
+        );
+
+
+    if (zoomIn) {
+
+        zoomIn.addEventListener(
+            "click",
+            () => {
+
+                zoomAtCenter(
+                    1.2
+                );
+
+            }
+        );
+
+    }
+
+
+    if (zoomOut) {
+
+        zoomOut.addEventListener(
+            "click",
+            () => {
+
+                zoomAtCenter(
+                    0.83
+                );
+
+            }
+        );
+
+    }
+
+
+    if (reset) {
+
+        reset.addEventListener(
+            "click",
+            () => {
+
+                resetMap();
+
+            }
+        );
+
+    }
+
+}
+
+
+// ------------------------------------------------------------
+// 按鈕縮放
+// ------------------------------------------------------------
+
+function zoomAtCenter(
+    amount
+) {
+
+    const oldScale =
+        currentScale;
+
+
+    currentScale =
+        Math.max(
+            MIN_SCALE,
+            Math.min(
+                MAX_SCALE,
+                currentScale *
+                amount
+            )
+        );
+
+
+    if (
+        currentScale ===
+        oldScale
+    ) {
+        return;
+    }
+
+
+    const centerX =
+        mapMount.clientWidth /
+        2;
+
+    const centerY =
+        mapMount.clientHeight /
+        2;
+
+
+    const ratio =
+        currentScale /
+        oldScale;
+
+
+    mapX =
+        centerX -
+        (centerX - mapX) *
+        ratio;
+
+
+    mapY =
+        centerY -
+        (centerY - mapY) *
+        ratio;
+
+
+    constrainMap();
+
+    updateMapTransform();
+
+}
+
+
+// ------------------------------------------------------------
+// 視窗大小改變
+// ------------------------------------------------------------
+
+window.addEventListener(
+    "resize",
+    () => {
+
+        if (!svg) return;
+
+        constrainMap();
+
+        updateMapTransform();
+
+    }
+);
+
+
+// ------------------------------------------------------------
+// 點擊地圖空白處
+// ------------------------------------------------------------
+
+document.addEventListener(
+    "click",
+    event => {
+
+        if (!svg) return;
+
+        const province =
+            event.target.closest(
+                ".province[data-province]"
+            );
+
+
+        // 點的是省份，不清除
+        if (province) {
+            return;
+        }
+
+    }
+);
+
+
+// ------------------------------------------------------------
+// Debug
+// ------------------------------------------------------------
+
+window.EurasianMap = {
+
+    reset: resetMap,
+
+    zoomIn: () =>
+        zoomAtCenter(1.2),
+
+    zoomOut: () =>
+        zoomAtCenter(0.83),
+
+    select: selectProvince,
+
+    getState: () => ({
+        province: currentProvince,
+        scale: currentScale,
+        x: mapX,
+        y: mapY
+    })
+
+};
