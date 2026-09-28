@@ -7,8 +7,19 @@
 const mapMount = document.getElementById("mapMount");
 
 let currentProvince = null;
+
 let currentScale = 1;
 
+let mapX = 0;
+let mapY = 0;
+
+let dragging = false;
+
+let dragStartX = 0;
+let dragStartY = 0;
+
+let startMapX = 0;
+let startMapY = 0;
 
 /* =========================
    省份資料
