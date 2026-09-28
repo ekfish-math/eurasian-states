@@ -15,6 +15,15 @@ let mapY = 0;
 
 let dragging = false;
 
+let pointerStartX = 0;
+let pointerStartY = 0;
+
+let startMapX = 0;
+let startMapY = 0;
+
+let moved = false;
+let dragging = false;
+
 let dragStartX = 0;
 let dragStartY = 0;
 
