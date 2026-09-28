@@ -1,1 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <title>歐亞之國｜Eurasian States</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #17130f;
+            color: #e8d8b5;
+            font-family: "Noto Serif TC", "Microsoft JhengHei", serif;
+        }
+
+        header {
+            height: 72px;
+            background: #241d16;
+            border-bottom: 1px solid #806b49;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+        }
+
+        .title {
+            font-size: 25px;
+            letter-spacing: 4px;
+        }
+
+        .era {
+            color: #c9a96e;
+            font-size: 15px;
+        }
+
+        main {
+            display: grid;
+            grid-template-columns: 240px 1fr 300px;
+            height: calc(100vh - 72px);
+        }
+
+        .panel {
+            background: #211a14;
+            padding: 22px;
+            overflow-y: auto;
+        }
+
+        .left {
+            border-right: 1px solid #66543a;
+        }
+
+        .right {
+            border-left: 1px solid #66543a;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 18px;
+            color: #d8b875;
+        }
+
+        .intro {
+            line-height: 1.8;
+            color: #bcae95;
+            font-size: 14px;
+        }
+
+        .map-area {
+            position: relative;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at center, #413829 0%, #282218 55%, #19150f 100%);
+        }
+
+        .map-title {
+            position: absolute;
+            top: 20px;
+            left: 25px;
+            z-index: 5;
+            font-size: 18px;
+            color: #c9a96e;
+        }
+
+        .map {
+            width: 100%;
+            height: 100%;
+        }
+
+        .region {
+            fill: #65543c;
+            stroke: #b99b64;
+            stroke-width: 1.5;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+
+        .region:hover {
+            fill: #92784d;
+        }
+
+        .region.selected {
+            fill: #b28a4d;
+            stroke: #f0d49b;
+            stroke-width: 3;
+        }
+
+        .sea {
+            fill: #202c2d;
+        }
+
+        .country-name {
+            fill: #ead9b8;
+            font-size: 13px;
+            pointer-events: none;
+            text-anchor: middle;
+        }
+
+        .info-box {
+            background: #2b231a;
+            border: 1px solid #685638;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #41372b;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+
+        .stat:last-child {
+            border-bottom: none;
+        }
+
+        .value {
+            color: #d7b56e;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 12px;
+            border-left: 3px solid #a77c3b;
+            background: #2a2118;
+            color: #bcae95;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        @media (max-width: 900px) {
+            main {
+                grid-template-columns: 180px 1fr;
+            }
+
+            .right {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="title">歐亞之國</div>
+    <div class="era">帝元 845 年</div>
+</header>
+
+<main>
+
+    <!-- 左側世界資訊 -->
+    <aside class="panel left">
+        <h2>世界開端</h2>
+
+        <div class="intro">
+            大陸之神創造了廣袤的大地。<br><br>
+
+            帝元八百四十五年，文明散布於歐亞大陸。
+            各地擁有不同的地形、資源與人口。
+            國家之間尚未形成穩定的秩序。
+        </div>
+
+        <div class="status">
+            <strong>0.1 世界開端</strong><br>
+            開發版本<br><br>
+            世界尚未正式開放。
+        </div>
+    </aside>
+
+
+    <!-- 中央地圖 -->
+    <section class="map-area">
+
+        <div class="map-title">
+            歐亞大陸
+        </div>
+
+        <svg class="map"
+             viewBox="0 0 1000 600"
+             preserveAspectRatio="xMidYMid meet">
+
+            <!-- 海洋 -->
+            <rect
+                class="sea"
+                x="0"
+                y="0"
+                width="1000"
+                height="600"
+            />
+
+            <!-- 北方大陸 -->
+            <path
+                id="northland"
+                class="region"
+                d="M170 120
+                   L260 75
+                   L380 80
+                   L470 110
+                   L560 90
+                   L680 125
+                   L790 160
+                   L850 220
+                   L810 260
+                   L710 250
+                   L620 230
+                   L520 250
+                   L430 225
+                   L330 240
+                   L240 210
+                   L180 180 Z"
+                onclick="selectRegion('northland')"
+            />
+
+            <!-- 西部 -->
+            <path
+                id="westland"
+                class="region"
+                d="M165 215
+                   L240 210
+                   L330 240
+                   L350 320
+                   L300 375
+                   L220 350
+                   L170 290 Z"
+                onclick="selectRegion('westland')"
+            />
+
+            <!-- 中部 -->
+            <path
+                id="central"
+                class="region"
+                d="M330 240
+                   L430 225
+                   L520 250
+                   L555 320
+                   L500 380
+                   L410 365
+                   L350 320 Z"
+                onclick="selectRegion('central')"
+            />
+
+            <!-- 東部 -->
+            <path
+                id="eastland"
+                class="region"
+                d="M520 250
+                   L620 230
+                   L710 250
+                   L780 300
+                   L745 375
+                   L650 395
+                   L555 320 Z"
+                onclick="selectRegion('eastland')"
+            />
+
+            <!-- 南部 -->
+            <path
+                id="southland"
+                class="region"
+                d="M300 375
+                   L350 320
+                   L410 365
+                   L500 380
+                   L555 320
+                   L650 395
+                   L610 465
+                   L500 490
+                   L390 465
+                   L300 430 Z"
+                onclick="selectRegion('southland')"
+            />
+
+            <!-- 區域名稱 -->
+            <text class="country-name" x="260" y="150">
+                北境
+            </text>
+
+            <text class="country-name" x="245" y="285">
+                西境
+            </text>
+
+            <text class="country-name" x="430" y="290">
+                中原
+            </text>
+
+            <text class="country-name" x="650" y="300">
+                東陸
+            </text>
+
+            <text class="country-name" x="470" y="430">
+                南境
+            </text>
+
+        </svg>
+
+    </section>
+
+
+    <!-- 右側區域資料 -->
+    <aside class="panel right">
+
+        <h2>區域資訊</h2>
+
+        <div id="regionInfo">
+
+            <div class="intro">
+                點擊地圖上的區域，
+                查看這片土地的基本資料。
+            </div>
+
+        </div>
+
+    </aside>
+
+</main>
+
+
+<script>
+
+const regions = {
+
+    northland: {
+        name: "北境",
+        terrain: "寒冷平原",
+        population: 850000,
+        agriculture: 45,
+        forestry: 70,
+        mining: 55,
+        fishing: 35
+    },
+
+    westland: {
+        name: "西境",
+        terrain: "山地與森林",
+        population: 620000,
+        agriculture: 35,
+        forestry: 90,
+        mining: 75,
+        fishing: 20
+    },
+
+    central: {
+        name: "中原",
+        terrain: "河流平原",
+        population: 1450000,
+        agriculture: 95,
+        forestry: 35,
+        mining: 40,
+        fishing: 60
+    },
+
+    eastland: {
+        name: "東陸",
+        terrain: "沿海平原",
+        population: 1100000,
+        agriculture: 70,
+        forestry: 45,
+        mining: 55,
+        fishing: 90
+    },
+
+    southland: {
+        name: "南境",
+        terrain: "乾燥高原",
+        population: 480000,
+        agriculture: 25,
+        forestry: 20,
+        mining: 85,
+        fishing: 15
+    }
+
+};
+
+
+function selectRegion(id) {
+
+    // 清除上一個選取
+    document.querySelectorAll(".region")
+        .forEach(region => {
+            region.classList.remove("selected");
+        });
+
+    // 標記目前區域
+    document.getElementById(id)
+        .classList.add("selected");
+
+    const region = regions[id];
+
+    document.getElementById("regionInfo").innerHTML = `
+
+        <h2>${region.name}</h2>
+
+        <div class="info-box">
+
+            <div class="stat">
+                <span>地形</span>
+                <span class="value">${region.terrain}</span>
+            </div>
+
+            <div class="stat">
+                <span>人口</span>
+                <span class="value">
+                    ${region.population.toLocaleString()}
+                </span>
+            </div>
+
+            <div class="stat">
+                <span>農業</span>
+                <span class="value">${region.agriculture}</span>
+            </div>
+
+            <div class="stat">
+                <span>林業</span>
+                <span class="value">${region.forestry}</span>
+            </div>
+
+            <div class="stat">
+                <span>礦業</span>
+                <span class="value">${region.mining}</span>
+            </div>
+
+            <div class="stat">
+                <span>漁業</span>
+                <span class="value">${region.fishing}</span>
+            </div>
+
+        </div>
+
+    `;
+}
+
+</script>
+
+</body>
+</html>
