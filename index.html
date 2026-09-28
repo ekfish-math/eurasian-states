@@ -1,426 +1,1265 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>歐亞之國｜Eurasian States</title>
+<title>歐亞之國｜Eurasian States</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<style>
 
-        body {
-            margin: 0;
-            background: #17130f;
-            color: #e8d8b5;
-            font-family: "Noto Serif TC", "Microsoft JhengHei", serif;
-        }
+* {
+    box-sizing: border-box;
+}
 
-        header {
-            height: 72px;
-            background: #241d16;
-            border-bottom: 1px solid #806b49;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 28px;
-        }
+:root {
+    --bg: #15120e;
+    --panel: #211b15;
+    --panel2: #2a2219;
+    --border: #665238;
+    --gold: #c7a76a;
+    --text: #e5d6b8;
+    --muted: #a99a82;
+    --land: #756548;
+    --land-dark: #574b37;
+    --sea: #17282b;
+    --river: #557b82;
+}
 
-        .title {
-            font-size: 25px;
-            letter-spacing: 4px;
-        }
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
 
-        .era {
-            color: #c9a96e;
-            font-size: 15px;
-        }
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family:
+        "Noto Serif TC",
+        "Microsoft JhengHei",
+        serif;
+    overflow: hidden;
+}
 
-        main {
-            display: grid;
-            grid-template-columns: 240px 1fr 300px;
-            height: calc(100vh - 72px);
-        }
+/* =========================
+   頂部
+========================= */
 
-        .panel {
-            background: #211a14;
-            padding: 22px;
-            overflow-y: auto;
-        }
+header {
+    height: 70px;
 
-        .left {
-            border-right: 1px solid #66543a;
-        }
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-        .right {
-            border-left: 1px solid #66543a;
-        }
+    padding: 0 28px;
 
-        h2 {
-            margin-top: 0;
-            font-size: 18px;
-            color: #d8b875;
-        }
+    background:
+        linear-gradient(
+            180deg,
+            #292119,
+            #211a14
+        );
 
-        .intro {
-            line-height: 1.8;
-            color: #bcae95;
-            font-size: 14px;
-        }
+    border-bottom: 1px solid var(--border);
 
-        .map-area {
-            position: relative;
-            overflow: hidden;
-            background:
-                radial-gradient(circle at center, #413829 0%, #282218 55%, #19150f 100%);
-        }
+    box-shadow:
+        0 2px 12px rgba(0,0,0,.35);
 
-        .map-title {
-            position: absolute;
-            top: 20px;
-            left: 25px;
-            z-index: 5;
-            font-size: 18px;
-            color: #c9a96e;
-        }
+    position: relative;
+    z-index: 20;
+}
 
-        .map {
-            width: 100%;
-            height: 100%;
-        }
+.logo {
+    display: flex;
+    align-items: baseline;
+    gap: 13px;
+}
 
-        .region {
-            fill: #65543c;
-            stroke: #b99b64;
-            stroke-width: 1.5;
-            cursor: pointer;
-            transition: 0.15s;
-        }
+.logo-main {
+    font-size: 27px;
+    letter-spacing: 6px;
+}
 
-        .region:hover {
-            fill: #92784d;
-        }
+.logo-sub {
+    color: #8e806b;
+    font-size: 11px;
+    letter-spacing: 2px;
+}
 
-        .region.selected {
-            fill: #b28a4d;
-            stroke: #f0d49b;
-            stroke-width: 3;
-        }
+.date-box {
+    text-align: right;
+}
 
-        .sea {
-            fill: #202c2d;
-        }
+.date {
+    color: var(--gold);
+    font-size: 17px;
+}
 
-        .country-name {
-            fill: #ead9b8;
-            font-size: 13px;
-            pointer-events: none;
-            text-anchor: middle;
-        }
+.version {
+    color: #82745e;
+    font-size: 11px;
+}
 
-        .info-box {
-            background: #2b231a;
-            border: 1px solid #685638;
-            padding: 15px;
-            margin-top: 15px;
-        }
+/* =========================
+   主體
+========================= */
 
-        .stat {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px solid #41372b;
-            padding: 8px 0;
-            font-size: 14px;
-        }
+main {
+    display: grid;
 
-        .stat:last-child {
-            border-bottom: none;
-        }
+    grid-template-columns:
+        250px
+        minmax(500px, 1fr)
+        310px;
 
-        .value {
-            color: #d7b56e;
-        }
+    height: calc(100vh - 70px);
+}
 
-        .status {
-            margin-top: 20px;
-            padding: 12px;
-            border-left: 3px solid #a77c3b;
-            background: #2a2118;
-            color: #bcae95;
-            font-size: 13px;
-            line-height: 1.7;
-        }
+/* =========================
+   側欄
+========================= */
 
-        @media (max-width: 900px) {
-            main {
-                grid-template-columns: 180px 1fr;
-            }
+.panel {
+    background: var(--panel);
+    overflow-y: auto;
+}
 
-            .right {
-                display: none;
-            }
-        }
-    </style>
+.left {
+    border-right: 1px solid var(--border);
+}
+
+.right {
+    border-left: 1px solid var(--border);
+}
+
+.panel-inner {
+    padding: 22px;
+}
+
+.section-title {
+    color: var(--gold);
+
+    font-size: 17px;
+
+    margin:
+        0 0 17px;
+
+    letter-spacing: 2px;
+}
+
+.description {
+    color: var(--muted);
+
+    font-size: 13px;
+
+    line-height: 1.9;
+}
+
+/* =========================
+   世界狀態
+========================= */
+
+.world-status {
+    margin-top: 24px;
+
+    border-top: 1px solid #44392a;
+    border-bottom: 1px solid #44392a;
+
+    padding: 15px 0;
+}
+
+.status-row {
+    display: flex;
+    justify-content: space-between;
+
+    padding: 7px 0;
+
+    font-size: 13px;
+}
+
+.status-value {
+    color: var(--gold);
+}
+
+/* =========================
+   地圖區
+========================= */
+
+.map-container {
+    position: relative;
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            #344143 0%,
+            #202b2d 50%,
+            #11191a 100%
+        );
+}
+
+/* 地圖紙張 */
+
+.map-paper {
+    position: absolute;
+
+    width: 100%;
+    height: 100%;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            rgba(195,160,92,.08),
+            transparent 65%
+        );
+
+    pointer-events: none;
+}
+
+/* 地圖標題 */
+
+.map-label {
+    position: absolute;
+
+    top: 20px;
+    left: 25px;
+
+    z-index: 10;
+
+    pointer-events: none;
+
+    text-shadow:
+        0 2px 5px #000;
+}
+
+.map-label-main {
+    font-size: 19px;
+    color: var(--gold);
+
+    letter-spacing: 3px;
+}
+
+.map-label-sub {
+    font-size: 10px;
+
+    color: #8c836f;
+
+    letter-spacing: 2px;
+
+    margin-top: 3px;
+}
+
+/* =========================
+   SVG
+========================= */
+
+.map {
+    width: 100%;
+    height: 100%;
+
+    cursor: grab;
+
+    user-select: none;
+}
+
+.map:active {
+    cursor: grabbing;
+}
+
+/* 海 */
+
+.ocean {
+    fill: #17282b;
+}
+
+/* 大陸 */
+
+.land {
+    fill: #67583f;
+
+    stroke: #b49a67;
+
+    stroke-width: 2;
+
+    stroke-linejoin: round;
+
+    cursor: pointer;
+
+    transition:
+        fill .15s,
+        filter .15s;
+}
+
+.land:hover {
+    fill: #85714b;
+
+    filter:
+        drop-shadow(
+            0 0 7px
+            rgba(211,175,103,.28)
+        );
+}
+
+.land.selected {
+    fill: #a1814c;
+
+    stroke: #e5c77e;
+
+    stroke-width: 3;
+}
+
+/* =========================
+   地形
+========================= */
+
+.mountain {
+    fill: #4e4434;
+
+    stroke: #9a8761;
+
+    stroke-width: 1.2;
+
+    opacity: .9;
+}
+
+.forest {
+    fill: #394b3a;
+
+    opacity: .85;
+}
+
+.desert {
+    fill: #9b8253;
+
+    opacity: .55;
+}
+
+.grassland {
+    fill: #68704a;
+
+    opacity: .55;
+}
+
+/* =========================
+   河流
+========================= */
+
+.river {
+    fill: none;
+
+    stroke: var(--river);
+
+    stroke-width: 3;
+
+    opacity: .85;
+
+    pointer-events: none;
+}
+
+/* =========================
+   城市
+========================= */
+
+.city {
+    fill: #e3c37c;
+
+    stroke: #2b2116;
+
+    stroke-width: 2;
+
+    cursor: pointer;
+}
+
+.city:hover {
+    fill: #fff0bd;
+}
+
+.city-name {
+    fill: #e4d4b1;
+
+    font-size: 12px;
+
+    text-anchor: middle;
+
+    pointer-events: none;
+
+    text-shadow:
+        0 2px 3px #000;
+}
+
+/* =========================
+   地圖按鈕
+========================= */
+
+.map-controls {
+    position: absolute;
+
+    right: 20px;
+    top: 20px;
+
+    z-index: 10;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+.map-btn {
+    width: 34px;
+    height: 34px;
+
+    border: 1px solid #786342;
+
+    background: #251f18;
+
+    color: #d4bd8b;
+
+    font-size: 17px;
+
+    cursor: pointer;
+}
+
+.map-btn:hover {
+    background: #3b3021;
+}
+
+/* =========================
+   右側資料
+========================= */
+
+.empty {
+    color: #827765;
+
+    font-size: 13px;
+
+    line-height: 1.8;
+}
+
+.region-title {
+    color: #e1c37f;
+
+    font-size: 22px;
+
+    margin-bottom: 4px;
+}
+
+.region-type {
+    color: #8f816b;
+
+    font-size: 12px;
+}
+
+.info-box {
+    margin-top: 20px;
+
+    background: var(--panel2);
+
+    border:
+        1px solid #5d4b32;
+
+    padding: 15px;
+}
+
+.info-heading {
+    color: #bda06b;
+
+    font-size: 13px;
+
+    margin-bottom: 8px;
+}
+
+.stat {
+    display: flex;
+
+    justify-content: space-between;
+
+    padding: 8px 0;
+
+    border-bottom:
+        1px solid #403528;
+
+    font-size: 13px;
+}
+
+.stat:last-child {
+    border-bottom: 0;
+}
+
+.value {
+    color: #d6b976;
+}
+
+.tooltip {
+    position: absolute;
+
+    display: none;
+
+    pointer-events: none;
+
+    z-index: 30;
+
+    background: #201a13;
+
+    border: 1px solid #8b7044;
+
+    padding: 7px 10px;
+
+    color: #e4d2aa;
+
+    font-size: 12px;
+
+    box-shadow:
+        0 4px 15px rgba(0,0,0,.5);
+}
+
+/* =========================
+   底部狀態列
+========================= */
+
+.bottom-bar {
+    position: absolute;
+
+    left: 18px;
+    right: 18px;
+    bottom: 15px;
+
+    height: 36px;
+
+    background: rgba(26,21,16,.9);
+
+    border:
+        1px solid #55462f;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 0 13px;
+
+    color: #95856d;
+
+    font-size: 11px;
+
+    z-index: 10;
+}
+
+.bottom-bar span {
+    color: #c6a96c;
+}
+
+/* =========================
+   手機
+========================= */
+
+@media (max-width: 1000px) {
+
+    main {
+        grid-template-columns:
+            200px
+            1fr;
+    }
+
+    .right {
+        display: none;
+    }
+}
+
+</style>
 </head>
 
 <body>
 
 <header>
-    <div class="title">歐亞之國</div>
-    <div class="era">帝元 845 年</div>
+
+    <div class="logo">
+
+        <div class="logo-main">
+            歐亞之國
+        </div>
+
+        <div class="logo-sub">
+            EURASIAN STATES
+        </div>
+
+    </div>
+
+    <div class="date-box">
+
+        <div class="date">
+            帝元 845 年
+        </div>
+
+        <div class="version">
+            0.1 · 世界開端
+        </div>
+
+    </div>
+
 </header>
+
 
 <main>
 
-    <!-- 左側世界資訊 -->
-    <aside class="panel left">
-        <h2>世界開端</h2>
+<!-- =====================
+     左側
+===================== -->
 
-        <div class="intro">
-            大陸之神創造了廣袤的大地。<br><br>
+<aside class="panel left">
 
-            帝元八百四十五年，文明散布於歐亞大陸。
-            各地擁有不同的地形、資源與人口。
-            國家之間尚未形成穩定的秩序。
+    <div class="panel-inner">
+
+        <h2 class="section-title">
+            世界開端
+        </h2>
+
+        <div class="description">
+
+            大陸之神創造了廣袤的大地。
+
+            <br><br>
+
+            帝元八百四十五年，
+            人類已遍布歐亞大陸。
+
+            <br><br>
+
+            山脈、森林、河流與草原
+            塑造了不同文明的命運。
+
         </div>
 
-        <div class="status">
-            <strong>0.1 世界開端</strong><br>
-            開發版本<br><br>
-            世界尚未正式開放。
-        </div>
-    </aside>
 
+        <div class="world-status">
 
-    <!-- 中央地圖 -->
-    <section class="map-area">
+            <div class="status-row">
+                <span>時代</span>
+                <span class="status-value">
+                    帝元 845
+                </span>
+            </div>
 
-        <div class="map-title">
-            歐亞大陸
-        </div>
+            <div class="status-row">
+                <span>世界狀態</span>
+                <span class="status-value">
+                    開端
+                </span>
+            </div>
 
-        <svg class="map"
-             viewBox="0 0 1000 600"
-             preserveAspectRatio="xMidYMid meet">
+            <div class="status-row">
+                <span>玩家</span>
+                <span class="status-value">
+                    尚未開放
+                </span>
+            </div>
 
-            <!-- 海洋 -->
-            <rect
-                class="sea"
-                x="0"
-                y="0"
-                width="1000"
-                height="600"
-            />
-
-            <!-- 北方大陸 -->
-            <path
-                id="northland"
-                class="region"
-                d="M170 120
-                   L260 75
-                   L380 80
-                   L470 110
-                   L560 90
-                   L680 125
-                   L790 160
-                   L850 220
-                   L810 260
-                   L710 250
-                   L620 230
-                   L520 250
-                   L430 225
-                   L330 240
-                   L240 210
-                   L180 180 Z"
-                onclick="selectRegion('northland')"
-            />
-
-            <!-- 西部 -->
-            <path
-                id="westland"
-                class="region"
-                d="M165 215
-                   L240 210
-                   L330 240
-                   L350 320
-                   L300 375
-                   L220 350
-                   L170 290 Z"
-                onclick="selectRegion('westland')"
-            />
-
-            <!-- 中部 -->
-            <path
-                id="central"
-                class="region"
-                d="M330 240
-                   L430 225
-                   L520 250
-                   L555 320
-                   L500 380
-                   L410 365
-                   L350 320 Z"
-                onclick="selectRegion('central')"
-            />
-
-            <!-- 東部 -->
-            <path
-                id="eastland"
-                class="region"
-                d="M520 250
-                   L620 230
-                   L710 250
-                   L780 300
-                   L745 375
-                   L650 395
-                   L555 320 Z"
-                onclick="selectRegion('eastland')"
-            />
-
-            <!-- 南部 -->
-            <path
-                id="southland"
-                class="region"
-                d="M300 375
-                   L350 320
-                   L410 365
-                   L500 380
-                   L555 320
-                   L650 395
-                   L610 465
-                   L500 490
-                   L390 465
-                   L300 430 Z"
-                onclick="selectRegion('southland')"
-            />
-
-            <!-- 區域名稱 -->
-            <text class="country-name" x="260" y="150">
-                北境
-            </text>
-
-            <text class="country-name" x="245" y="285">
-                西境
-            </text>
-
-            <text class="country-name" x="430" y="290">
-                中原
-            </text>
-
-            <text class="country-name" x="650" y="300">
-                東陸
-            </text>
-
-            <text class="country-name" x="470" y="430">
-                南境
-            </text>
-
-        </svg>
-
-    </section>
-
-
-    <!-- 右側區域資料 -->
-    <aside class="panel right">
-
-        <h2>區域資訊</h2>
-
-        <div id="regionInfo">
-
-            <div class="intro">
-                點擊地圖上的區域，
-                查看這片土地的基本資料。
+            <div class="status-row">
+                <span>國家</span>
+                <span class="status-value">
+                    5
+                </span>
             </div>
 
         </div>
 
-    </aside>
+
+        <div class="description"
+             style="margin-top:20px">
+
+            <strong style="color:#bca16c">
+                地圖操作
+            </strong>
+
+            <br><br>
+
+            滑鼠拖曳：移動地圖
+
+            <br>
+
+            滾輪：縮放地圖
+
+            <br>
+
+            點擊區域：查看資料
+
+        </div>
+
+    </div>
+
+</aside>
+
+
+<!-- =====================
+     中央地圖
+===================== -->
+
+<section class="map-container">
+
+    <div class="map-paper"></div>
+
+
+    <div class="map-label">
+
+        <div class="map-label-main">
+            歐亞大陸
+        </div>
+
+        <div class="map-label-sub">
+            THE GREAT CONTINENT
+        </div>
+
+    </div>
+
+
+    <div class="map-controls">
+
+        <button
+            class="map-btn"
+            onclick="zoomMap(1.2)">
+            +
+        </button>
+
+        <button
+            class="map-btn"
+            onclick="zoomMap(0.8)">
+            −
+        </button>
+
+        <button
+            class="map-btn"
+            onclick="resetMap()">
+            ◇
+        </button>
+
+    </div>
+
+
+    <div id="tooltip"
+         class="tooltip">
+    </div>
+
+
+    <svg
+        id="worldMap"
+        class="map"
+        viewBox="0 0 1200 700"
+        preserveAspectRatio="xMidYMid meet">
+
+        <g id="mapWorld">
+
+            <!-- 海洋 -->
+
+            <rect
+                class="ocean"
+                x="0"
+                y="0"
+                width="1200"
+                height="700"
+            />
+
+
+            <!-- =================
+                 歐亞大陸
+            ================= -->
+
+            <path
+                id="north"
+                class="land"
+                d="
+                M170 185
+                L205 130
+                L270 100
+                L350 82
+                L430 90
+                L505 112
+                L580 105
+                L655 118
+                L730 105
+                L810 130
+                L900 160
+                L985 205
+                L1040 250
+                L1080 305
+                L1040 345
+                L965 340
+                L900 320
+                L820 330
+                L745 315
+                L680 335
+                L600 315
+                L525 325
+                L455 305
+                L380 315
+                L310 290
+                L245 270
+                L190 235
+                Z
+                "
+                onclick="selectRegion('north')"
+                onmousemove="showTooltip(event,'北方草原')"
+                onmouseleave="hideTooltip()"
+            />
+
+
+            <!-- 西部 -->
+
+            <path
+                id="west"
+                class="land"
+                d="
+                M190 235
+                L245 270
+                L310 290
+                L350 345
+                L325 410
+                L270 450
+                L215 425
+                L175 365
+                L155 295
+                Z
+                "
+                onclick="selectRegion('west')"
+                onmousemove="showTooltip(event,'西陸')"
+                onmouseleave="hideTooltip()"
+            />
+
+
+            <!-- 中原 -->
+
+            <path
+                id="central"
+                class="land"
+                d="
+                M310 290
+                L380 315
+                L455 305
+                L525 325
+                L570 385
+                L535 445
+                L470 470
+                L395 450
+                L350 410
+                L325 345
+                Z
+                "
+                onclick="selectRegion('central')"
+                onmousemove="showTooltip(event,'中央河谷')"
+                onmouseleave="hideTooltip()"
+            />
+
+
+            <!-- 東陸 -->
+
+            <path
+                id="east"
+                class="land"
+                d="
+                M525 325
+                L600 315
+                L680 335
+                L745 315
+                L820 330
+                L900 320
+                L965 340
+                L1015 390
+                L990 455
+                L920 480
+                L845 455
+                L780 470
+                L700 450
+                L630 430
+                L570 385
+                Z
+                "
+                onclick="selectRegion('east')"
+                onmousemove="showTooltip(event,'東陸')"
+                onmouseleave="hideTooltip()"
+            />
+
+
+            <!-- 南方 -->
+
+            <path
+                id="south"
+                class="land"
+                d="
+                M350 410
+                L395 450
+                L470 470
+                L535 445
+                L630 430
+                L700 450
+                L780 470
+                L755 535
+                L680 575
+                L580 590
+                L485 565
+                L410 530
+                L350 475
+                Z
+                "
+                onclick="selectRegion('south')"
+                onmousemove="showTooltip(event,'南方高原')"
+                onmouseleave="hideTooltip()"
+            />
+
+
+            <!-- =================
+                 地形
+            ================= -->
+
+            <!-- 山脈 -->
+
+            <g class="mountain">
+
+                <path d="
+                    M315 255
+                    L335 225
+                    L350 255
+                    L365 220
+                    L380 260
+                    L395 230
+                    L410 270
+                    L425 240
+                    L440 275
+                    L455 245
+                    L470 280
+                "/>
+
+                <path d="
+                    M690 315
+                    L710 280
+                    L725 315
+                    L742 275
+                    L760 320
+                    L780 285
+                    L800 325
+                "/>
+
+            </g>
+
+
+            <!-- 森林 -->
+
+            <g class="forest">
+
+                <circle cx="245" cy="315" r="12"/>
+                <circle cx="265" cy="330" r="10"/>
+                <circle cx="285" cy="315" r="12"/>
+                <circle cx="260" cy="350" r="11"/>
+
+                <circle cx="225" cy="355" r="10"/>
+                <circle cx="295" cy="350" r="9"/>
+
+            </g>
+
+
+            <!-- 沙漠 -->
+
+            <path
+                class="desert"
+                d="
+                M430 470
+                Q500 430 570 455
+                Q630 475 690 450
+                L675 525
+                Q600 550 530 530
+                Q470 520 420 500
+                Z
+                "
+            />
+
+
+            <!-- 草原 -->
+
+            <path
+                class="grassland"
+                d="
+                M500 155
+                Q650 135 820 180
+                Q900 200 960 245
+                L930 300
+                Q820 280 720 290
+                Q600 275 510 300
+                Z
+                "
+            />
+
+
+            <!-- =================
+                 河流
+            ================= -->
+
+            <path
+                class="river"
+                d="
+                M470 185
+                Q455 250 475 310
+                Q490 355 470 405
+                Q450 445 470 490
+                "
+            />
+
+            <path
+                class="river"
+                d="
+                M620 180
+                Q590 240 610 300
+                Q630 350 690 385
+                "
+            />
+
+            <path
+                class="river"
+                d="
+                M800 230
+                Q760 280 770 340
+                Q780 390 825 430
+                "
+            />
+
+
+            <!-- =================
+                 城市
+            ================= -->
+
+            <circle
+                class="city"
+                cx="395"
+                cy="345"
+                r="7"
+            />
+
+            <text
+                class="city-name"
+                x="395"
+                y="335">
+                王都
+            </text>
+
+
+            <circle
+                class="city"
+                cx="620"
+                cy="350"
+                r="7"
+            />
+
+            <text
+                class="city-name"
+                x="620"
+                y="340">
+                河城
+            </text>
+
+
+            <circle
+                class="city"
+                cx="820"
+                cy="370"
+                r="7"
+            />
+
+            <text
+                class="city-name"
+                x="820"
+                y="360">
+                東都
+            </text>
+
+
+            <circle
+                class="city"
+                cx="555"
+                cy="505"
+                r="7"
+            />
+
+            <text
+                class="city-name"
+                x="555"
+                y="495">
+                南城
+            </text>
+
+        </g>
+
+    </svg>
+
+
+    <div class="bottom-bar">
+
+        世界時間：
+        <span>帝元 845 年 · 第 1 月 · 第 1 日</span>
+
+        <span style="margin-left:auto">
+            0.1 世界開端
+        </span>
+
+    </div>
+
+</section>
+
+
+<!-- =====================
+     右側
+===================== -->
+
+<aside class="panel right">
+
+    <div class="panel-inner">
+
+        <h2 class="section-title">
+            區域資訊
+        </h2>
+
+        <div id="regionInfo">
+
+            <div class="empty">
+
+                點擊地圖上的土地。
+
+                <br><br>
+
+                這個世界的每一片土地，
+                都將在未來擁有自己的：
+
+                <br><br>
+
+                ・人口<br>
+                ・資源<br>
+                ・城市<br>
+                ・經濟<br>
+                ・文化<br>
+                ・國家<br>
+                ・歷史
+
+            </div>
+
+        </div>
+
+    </div>
+
+</aside>
 
 </main>
 
 
 <script>
 
+/* =========================
+   區域資料
+========================= */
+
 const regions = {
 
-    northland: {
-        name: "北境",
-        terrain: "寒冷平原",
+    north: {
+        name: "北方草原",
+        terrain: "廣闊草原",
         population: 850000,
         agriculture: 45,
-        forestry: 70,
-        mining: 55,
-        fishing: 35
+        forestry: 50,
+        mining: 60,
+        fishing: 25,
+        description:
+            "廣大的草原地帶，適合畜牧與騎乘民族發展。"
     },
 
-    westland: {
-        name: "西境",
+    west: {
+        name: "西陸",
         terrain: "山地與森林",
         population: 620000,
         agriculture: 35,
         forestry: 90,
         mining: 75,
-        fishing: 20
+        fishing: 20,
+        description:
+            "山脈與森林交錯，木材與礦產十分豐富。"
     },
 
     central: {
-        name: "中原",
+        name: "中央河谷",
         terrain: "河流平原",
         population: 1450000,
         agriculture: 95,
         forestry: 35,
         mining: 40,
-        fishing: 60
+        fishing: 65,
+        description:
+            "河流沖積形成肥沃平原，是人口最密集的地區之一。"
     },
 
-    eastland: {
+    east: {
         name: "東陸",
         terrain: "沿海平原",
         population: 1100000,
         agriculture: 70,
         forestry: 45,
         mining: 55,
-        fishing: 90
+        fishing: 90,
+        description:
+            "面向大海，擁有天然港灣與豐富漁業資源。"
     },
 
-    southland: {
-        name: "南境",
+    south: {
+        name: "南方高原",
         terrain: "乾燥高原",
         population: 480000,
         agriculture: 25,
         forestry: 20,
         mining: 85,
-        fishing: 15
+        fishing: 15,
+        description:
+            "氣候乾燥，但蘊藏大量礦產資源。"
     }
 
 };
 
 
+/* =========================
+   選擇區域
+========================= */
+
 function selectRegion(id) {
 
-    // 清除上一個選取
-    document.querySelectorAll(".region")
-        .forEach(region => {
-            region.classList.remove("selected");
-        });
+    document
+        .querySelectorAll(".land")
+        .forEach(
+            element =>
+                element.classList.remove("selected")
+        );
 
-    // 標記目前區域
-    document.getElementById(id)
-        .classList.add("selected");
+    const element =
+        document.getElementById(id);
 
-    const region = regions[id];
+    if (!element) return;
 
-    document.getElementById("regionInfo").innerHTML = `
+    element.classList.add("selected");
 
-        <h2>${region.name}</h2>
+    const region =
+        regions[id];
+
+    document.getElementById(
+        "regionInfo"
+    ).innerHTML = `
+
+        <div class="region-title">
+            ${region.name}
+        </div>
+
+        <div class="region-type">
+            ${region.terrain}
+        </div>
 
         <div class="info-box">
 
-            <div class="stat">
-                <span>地形</span>
-                <span class="value">${region.terrain}</span>
+            <div class="info-heading">
+                基本資料
             </div>
 
             <div class="stat">
@@ -432,28 +1271,225 @@ function selectRegion(id) {
 
             <div class="stat">
                 <span>農業</span>
-                <span class="value">${region.agriculture}</span>
+                <span class="value">
+                    ${region.agriculture}
+                </span>
             </div>
 
             <div class="stat">
                 <span>林業</span>
-                <span class="value">${region.forestry}</span>
+                <span class="value">
+                    ${region.forestry}
+                </span>
             </div>
 
             <div class="stat">
                 <span>礦業</span>
-                <span class="value">${region.mining}</span>
+                <span class="value">
+                    ${region.mining}
+                </span>
             </div>
 
             <div class="stat">
                 <span>漁業</span>
-                <span class="value">${region.fishing}</span>
+                <span class="value">
+                    ${region.fishing}
+                </span>
+            </div>
+
+        </div>
+
+        <div class="info-box">
+
+            <div class="info-heading">
+                地理概況
+            </div>
+
+            <div class="description">
+                ${region.description}
             </div>
 
         </div>
 
     `;
 }
+
+
+/* =========================
+   Tooltip
+========================= */
+
+function showTooltip(event, text) {
+
+    const tooltip =
+        document.getElementById(
+            "tooltip"
+        );
+
+    tooltip.innerText = text;
+
+    tooltip.style.display =
+        "block";
+
+    const rect =
+        document
+            .querySelector(".map-container")
+            .getBoundingClientRect();
+
+    tooltip.style.left =
+        (event.clientX - rect.left + 12)
+        + "px";
+
+    tooltip.style.top =
+        (event.clientY - rect.top + 12)
+        + "px";
+}
+
+
+function hideTooltip() {
+
+    document.getElementById(
+        "tooltip"
+    ).style.display = "none";
+
+}
+
+
+/* =========================
+   地圖縮放
+========================= */
+
+let scale = 1;
+
+let translateX = 0;
+let translateY = 0;
+
+
+function updateMap() {
+
+    document.getElementById(
+        "mapWorld"
+    ).setAttribute(
+        "transform",
+        `
+        translate(${translateX} ${translateY})
+        scale(${scale})
+        `
+    );
+
+}
+
+
+function zoomMap(amount) {
+
+    scale *= amount;
+
+    scale =
+        Math.max(
+            0.7,
+            Math.min(
+                scale,
+                3
+            )
+        );
+
+    updateMap();
+
+}
+
+
+function resetMap() {
+
+    scale = 1;
+
+    translateX = 0;
+    translateY = 0;
+
+    updateMap();
+
+}
+
+
+/* =========================
+   滑鼠拖曳
+========================= */
+
+const map =
+    document.getElementById(
+        "worldMap"
+    );
+
+let dragging = false;
+
+let lastX = 0;
+let lastY = 0;
+
+
+map.addEventListener(
+    "mousedown",
+    event => {
+
+        dragging = true;
+
+        lastX = event.clientX;
+        lastY = event.clientY;
+
+    }
+);
+
+
+window.addEventListener(
+    "mouseup",
+    () => {
+
+        dragging = false;
+
+    }
+);
+
+
+window.addEventListener(
+    "mousemove",
+    event => {
+
+        if (!dragging) return;
+
+        translateX +=
+            (event.clientX - lastX)
+            / 2;
+
+        translateY +=
+            (event.clientY - lastY)
+            / 2;
+
+        lastX = event.clientX;
+        lastY = event.clientY;
+
+        updateMap();
+
+    }
+);
+
+
+/* =========================
+   滾輪縮放
+========================= */
+
+map.addEventListener(
+    "wheel",
+    event => {
+
+        event.preventDefault();
+
+        zoomMap(
+            event.deltaY < 0
+                ? 1.1
+                : 0.9
+        );
+
+    },
+    { passive: false }
+);
 
 </script>
 
